@@ -1,9 +1,10 @@
 #ifndef RAYH
 #define RAYH
 
-#include "glm/glm.hpp"
+#include "vec3.h"
+//#include "glm/glm.hpp"
 
-using namespace glm;
+//using namespace glm;
 
 class ray
 {

@@ -1,20 +1,31 @@
 #include <iostream>
-#include "glm/glm.hpp"
 #include "ray.h"
+#include <fstream>
+//include "glm/glm.hpp"
 
 using namespace std;
-using namespace glm;
+//using namespace glm;
+
+bool hit_sphere(const vec3& centre, float radius, const ray& r)
+{
+	 vec3 oc = r.origin()-centre;
+	 float a = dot(r.direction(),r.direction());
+	 return true;
+}
 
 vec3 color(const ray& r)
 {
 	 vec3 unit_direction = normalize(r.direction());
-	 float t = 0.5*(unit_direction.y + 1.0);
+	 float t = 0.5*(unit_direction.j + 1.0);
 	 return float(1.0-t)*vec3(1.0,1.0,1.0)+t*vec3(0.5,0.7,1.0);
 }
 
 int main ()
 {
+	 ofstream ofs;
+	 ofs.open("scene.ppm", ios::trunc);
 
+	 vec3 v = vec3(1.3,1.3,1.3);
 	 int W = 200;
 	 int H = 100;
 
@@ -38,7 +49,8 @@ int main ()
 				int ig = int(255.99*col[1]);
 				int ib = int(255.99*col[2]);
 				
-				cout<<ir<<" "<<ig<<" "<<ib<<endl;
+				ofs<<ir<<" "<<ig<<" "<<ib<<endl;
 		  }
 	 }
+	 ofs.close();
 }
