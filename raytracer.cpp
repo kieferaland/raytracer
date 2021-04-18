@@ -3,12 +3,14 @@
 #include "hitable_list.h"
 #include "float.h"
 #include "camera.h"
+#include "material.h"
 #include <fstream>
 //include "glm/glm.hpp"
 
 using namespace std;
 //using namespace glm;
 
+/*
 vec3 random_in_unit_sphere()
 {
 	 vec3 p;
@@ -19,6 +21,7 @@ vec3 random_in_unit_sphere()
 	 while (p.squared_length() >= float(1.0));
 	 return p;
 }
+*/
 
 vec3 color(const ray& r, hitable *world)
 {	
