@@ -10,19 +10,6 @@
 using namespace std;
 //using namespace glm;
 
-/*
-vec3 random_in_unit_sphere()
-{
-	 vec3 p;
-	 do
-	 {
-		  p = float(2.0)*vec3(drand48(),drand48(),drand48())-vec3(1.0,1.0,1.0);
-	 }
-	 while (p.squared_length() >= float(1.0));
-	 return p;
-}
-*/
-
 vec3 color(const ray& r, hitable *world)
 {	
 	 hit_record rec;
@@ -42,7 +29,7 @@ vec3 color(const ray& r, hitable *world)
 int main ()
 {
 	 ofstream ofs;
-	 ofs.open("scene1.ppm", ios::trunc);
+	 ofs.open("scene.ppm", ios::trunc);
 	 
 	 /*
 	 vec3 v = vec3(1.3,1.3,1.3);
