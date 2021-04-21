@@ -6,6 +6,7 @@
 #include "material.h"
 #include <fstream>
 //include "glm/glm.hpp"
+#include "get_params.h"
 
 using namespace std;
 //using namespace glm;
@@ -26,11 +27,13 @@ vec3 color(const ray& r, hitable *world)
 	 }
 }
 
-int main ()
+int main (int argc, char* argv[]) 
 {
 	 ofstream ofs;
 	 ofs.open("scene.ppm", ios::trunc);
 	 
+	 get_params(argc, argv);
+
 	 /*
 	 vec3 v = vec3(1.3,1.3,1.3);
 	 float vdv = dot(v,v);
@@ -42,7 +45,8 @@ int main ()
 	 int S = 100;
 
 	 ofs<<"P3\n"<<W<<" "<<H<<"\n255"<<endl;
-	 
+	
+	 //cout<<NEAR<<endl;
 	 hitable *list[2];
 	 list[0] = new sphere(vec3(0,0,-1), float(0.5));
 	 list[1] = new sphere(vec3(0, -100.5, -1), float(100));

@@ -12,8 +12,37 @@ class sphere_info
 		  float position[3];
 		  float scaling[3];
 		  float colour[3];
-		  float illumination[3];
+		  float illumination[4];
 		  int specular;
+
+		  friend ostream& operator<<(ostream& os, const sphere_info& _si)
+		  {
+				return os 	<< "position: "
+								<< "("
+								<< _si.position[0] << ", "
+								<< _si.position[1] << ", "
+								<< _si.position[2] << ")\n"
+								<< "scaling: "
+								<< "("
+								<< _si.scaling[0] << ", "
+								<< _si.scaling[1] << ", "
+								<< _si.scaling[2] << ")\n"
+								<< "colour: "
+								<< "("
+								<< _si.colour[0] << ", "
+								<< _si.colour[1] << ", "
+								<< _si.colour[2] << ")\n"
+								<< "illumination: "
+								<< "("
+								<< _si.illumination[0] << ", "
+								<< _si.illumination[1] << ", "
+								<< _si.illumination[2] << ", "
+								<< _si.illumination[3] << ")\n"
+								<< "specular: "
+								<< _si.specular
+								<< endl;
+		  }
+
 }si[14];
 
 class light_info
@@ -21,9 +50,24 @@ class light_info
 	 public:
 		  float position[3];
 		  float intensity[3];
+
+		  friend ostream& operator<<(ostream& os, const light_info& _li)
+		  {
+				return os 	<< "position: "
+								<< "("
+								<< _li.position[0] << ", "
+								<< _li.position[1] << ", "
+								<< _li.position[2] << ")\n"
+								<< "intensity: "
+								<< "("
+								<< _li.intensity[0] << ", "
+								<< _li.intensity[1] << ", "
+								<< _li.intensity[2] << ")"
+								<< endl;
+		  }
 }li[9];
 
-int main ()
+inline int get_params(int argc, char* argv[])
 {
 	 // define file for reading parameters from
 	 ifstream in_file;
@@ -31,8 +75,8 @@ int main ()
 
 	 // line and object identifiers
 	 int line_num = 0;
-	 int sphere_num = 0;
-	 int light_num = 0;
+	 int NUM_SPHERES = 0;
+	 int NUM_LIGHTS = 0;
 
 	 // dictionary to store lines read from file 
 	 map<int,string> file_lines;
@@ -53,8 +97,14 @@ int main ()
 	 
 	 string OUTPUT;
 
+	 if (argc < 2)
+	 {
+		  return 1;
+	 }
+
+	 cout<<argv[1]<<endl;
 	 // open file and store text lines in file_lines dictionary
-	 in_file.open("testAmbient.txt");
+	 in_file.open(argv[1]);
 	 while (getline(in_file, file_line))
 	 {
 		  line_num++;
@@ -73,6 +123,7 @@ int main ()
 	 // parse lines and store parameters in respective dictionaries for the line header token
 	 for (auto line: file_lines)
 	 {		
+		  //cout<<"at the start of the FOR loop <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"<<endl;
 		  //cout<<line.first<<endl;
 		  //cout<<line.second<<endl;
 		  
@@ -85,16 +136,17 @@ int main ()
 		  // for each line
 		  while((next = line.second.find(delimiter,last)) != string::npos)
 		  {
+				//cout<<"at the start of the WHILE loop ---------------------------------"<<endl;
 				// get current token 
 				token = line.second.substr(last, next-last);
-				//cout<<token<<endl;
+				//cout<<"starting WHILE with token : "<<token<<endl;
 				// if the first token of a line is OUTPUT we are on the last line
 				if (token.compare("OUTPUT")==0)
 				{
-					 cout<<"we didnt come this far to come this far"<<endl;
+					 //cout<<"we didnt come this far to come this far"<<endl;
 					 last = next+delimiter.length();
 					 OUTPUT = line.second.substr(last);
-					 cout<<"drumroll pls...\n OUTPUT -> "<<OUTPUT<<endl;
+					 //cout<<"drumroll pls...\n OUTPUT -> "<<OUTPUT<<endl;
 					 goto after_loop;
 				}
 				// if the first token of a line is not SPHERE or LIGHT
@@ -110,7 +162,7 @@ int main ()
 								token = line.second.substr(last, next-last);
 								RES[i] = stoi(token);
 						  }
-						  goto end_of_loop;
+						  break;
 					 }
 					 else if (token.compare("BACK")==0)
 					 {
@@ -121,7 +173,7 @@ int main ()
 								token = line.second.substr(last, next-last);
 								BACK[i] = stof(token);
 						  }
-						  goto end_of_loop;
+						  break;
 					 }
 					 else if (token.compare("AMBIENT")==0)
 					 {
@@ -132,12 +184,16 @@ int main ()
 								token = line.second.substr(last, next-last);
 								AMBIENT[i] = stof(token);
 						  }
-						  goto end_of_loop;
+						  break;
 					 }
 					 else
 					 {
-					 cout<<"found an hello environment param token : "<<token<<endl;
-					 params[token];
+						  //cout<<"found an environment param token : "<<token<<endl;
+						  params[token];
+						  last = next+delimiter.length();
+						  //cout<<"end of loop dict entry : token = "<<token<<endl;
+						  params[token] = stoi(line.second.substr(last));
+						  //cout<<"dictionary entry for "<<token<<" is "<<params[token]<<endl;
 					 }
 				}
 				// first token of line is SPHERE	
@@ -151,34 +207,34 @@ int main ()
 						  last = next+delimiter.length();
 						  next = line.second.find(delimiter,last);
 						  token = line.second.substr(last, next-last);
-						  si[sphere_num].position[i] = stof(token);
+						  si[NUM_SPHERES].position[i] = stof(token);
 					 }
 					 for (int i=0; i<3; i++)
 					 {
 						  last = next+delimiter.length();
 						  next = line.second.find(delimiter,last);
 						  token = line.second.substr(last, next-last);
-						  si[sphere_num].scaling[i] = stof(token);
+						  si[NUM_SPHERES].scaling[i] = stof(token);
 					 }
 					 for (int i=0; i<3; i++)
 					 {
 						  last = next+delimiter.length();
 						  next = line.second.find(delimiter,last);
 						  token = line.second.substr(last, next-last);
-						  si[sphere_num].colour[i] = stof(token);
+						  si[NUM_SPHERES].colour[i] = stof(token);
 					 }
-					 for (int i=0; i<3; i++)
+					 for (int i=0; i<4; i++)
 					 {
 						  last = next+delimiter.length();
 						  next = line.second.find(delimiter,last);
 						  token = line.second.substr(last, next-last);
-						  si[sphere_num].illumination[i] = stof(token);
+						  si[NUM_SPHERES].illumination[i] = stof(token);
 					 }
 					 last = next+delimiter.length();
-					 si[sphere_num].specular = stoi(line.second.substr(last));
-					 spheres[sphere_num] = si[sphere_num];
-					 sphere_num++;
-					 goto end_of_loop;
+					 si[NUM_SPHERES].specular = stoi(line.second.substr(last));
+					 spheres[NUM_SPHERES] = si[NUM_SPHERES];
+					 NUM_SPHERES++;
+					 break;
 	 			}
 				// first token of line is LIGHT
 				else if (token.compare("LIGHT")==0)
@@ -191,18 +247,18 @@ int main ()
 						  last = next+delimiter.length();
 						  next = line.second.find(delimiter,last);
 						  token = line.second.substr(last, next-last);
-						  li[light_num].position[i] = stof(token);
+						  li[NUM_LIGHTS].position[i] = stof(token);
 					 }
 					 for (int i=0; i<3; i++)
 					 {
 						  last = next+delimiter.length();
 						  next = line.second.find(delimiter,last);
 						  token = line.second.substr(last, next-last);
-						  li[light_num].intensity[i] = stof(token);
+						  li[NUM_LIGHTS].intensity[i] = stof(token);
 					 }
-					 lights[light_num] = li[light_num];
-					 light_num++;
-					 goto end_of_loop;
+					 lights[NUM_LIGHTS] = li[NUM_LIGHTS];
+					 NUM_LIGHTS++;
+					 break;
 				}
 				// increment the last pointer to after the current delimeter
 				last = next+delimiter.length();
@@ -210,20 +266,36 @@ int main ()
 		  }
 		  // dont forget the last token
 		  // this is wrong as it stands
-		  cout<<"end of loop dict entry : token = "<<token<<endl;
-		  params[token] = stoi(line.second.substr(last));
-		  cout<<"dictionary entry for "<<token<<" is "<<params[token]<<endl;
-end_of_loop:
 	 }
 after_loop:
 	 in_file.close();
-
+	 
+	 /*
 	 // lets see what we've got so far
+	 cout<<"\n\nprinting params:\n"<<endl;
 	 for (auto param : params)
 	 {
 		  cout<<param.first<<" : "<<param.second<<endl;
 	 }
-
 	 cout<<"RES : ("<<RES[0]<<", "<<RES[1]<<")"<<endl;
+	 cout<<"BACK : ("<<BACK[0]<<", "<<BACK[1]<<", "<<BACK[2]<<")"<<endl;
+	 cout<<"AMBIENT : ("<<AMBIENT[0]<<", "<<AMBIENT[1]<<", "<<AMBIENT[2]<<")"<<endl;
+	 cout<<"OUTPUT : "<<OUTPUT<<endl;
+	 cout<<endl<<endl;
+	 cout<<"NUM_SPHERES : "<<NUM_SPHERES<<endl;
+	 cout<<"NUM_LIGHTS : "<<NUM_LIGHTS<<endl;
+	 cout<<endl<<endl;
+	 for (int i=0; i<NUM_SPHERES; i++)
+	 {
+		  cout<<"Sphere "<<i+1<<":\n";
+		  cout<<si[i]<<endl;
+	 }
+	 for (int i=0; i<NUM_LIGHTS; i++)
+	 {
+		  cout<<"Light "<<i+1<<":\n";
+		  cout<<li[i]<<endl;
+	 }
 
+	 */
+	 return 0;
 }
