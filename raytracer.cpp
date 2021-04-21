@@ -6,10 +6,9 @@
 #include "material.h"
 #include <fstream>
 //include "glm/glm.hpp"
-#include "get_params.h"
+#include "params_getter.h"
 
 using namespace std;
-//using namespace glm;
 
 vec3 color(const ray& r, hitable *world)
 {	
@@ -32,7 +31,13 @@ int main (int argc, char* argv[])
 	 ofstream ofs;
 	 ofs.open("scene.ppm", ios::trunc);
 	 
-	 get_params(argc, argv);
+	 params_getter pg;
+	 pg.get_params(argc, argv);
+	 map<string, float> params = pg.get_params_map();
+	 
+	 cout<<"hello"<<endl;
+	 cout<<"NEAR : "<<params["NEAR"]<<endl;
+	 cout<<"BOTTOM : "<<params["BOTTOM"]<<endl;
 
 	 /*
 	 vec3 v = vec3(1.3,1.3,1.3);
