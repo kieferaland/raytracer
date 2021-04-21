@@ -5,25 +5,23 @@
 
 using namespace std;
 // sphere parameters stored in these class objects
-// i initialize 14 because i cant figure out how to create new ones... i'm new to cpp
+// i initialize 14 because i cant figure out how to name new objects without pre initializing... i'm new to cpp
 class sphere_info
 {	
 	 public:
-		  int num;
-		  string name;
 		  float position[3];
 		  float scaling[3];
-		  float color[3];
+		  float colour[3];
 		  float illumination[3];
 		  int specular;
-		  int params[14];
 }si[14];
 
 class light_info
 {
-	 int num;
-	 int properties[6];
-};
+	 public:
+		  float position[3];
+		  float intensity[3];
+}li[9];
 
 int main ()
 {
@@ -41,7 +39,7 @@ int main ()
 	 
 	 // once we have the lines in a dictionary we can parse them out into maps and arrays for later lookup
 	 // params map is for viewport parameters
-	 map<string,int> params;
+	 map<string,float> params;
 	 
 	 // resolution width and height respectively in this array
 	 int RES[2];
@@ -50,8 +48,8 @@ int main ()
 	 map<int,struct sphere_info> spheres;
 	 map<int,struct light_info> lights;
 
-	 int BACK[3];
-	 int AMBIENT[3];
+	 float BACK[3];
+	 float AMBIENT[3];
 	 
 	 string OUTPUT;
 
@@ -63,79 +61,169 @@ int main ()
 		  file_lines[line_num] = file_line;
 	 }
 	 // print lines from file_lines dictionary as a test
+	 cout<<"\nPrinting lines from file_lines dictionary:\n"<<endl;
 	 for (auto line : file_lines)
 	 {
 		  cout<<line.first<<" : "<<line.second<<endl;
 	 }
+	 
 	 // print number of items in the file_lines dictionary 
 	 // which should match the number of lines in file
-	 cout<<"there are "<<line_num<<" lines in this input file."<<endl;
-	 // parse lines and store parameters in respective dictionaries for the line header
+	 cout<<"there were "<<line_num<<" lines in this input file.\n"<<endl;
+	 // parse lines and store parameters in respective dictionaries for the line header token
 	 for (auto line: file_lines)
 	 {		
-		  cout<<line.first<<endl;
-		  cout<<line.second<<endl;
-		  // parse the lines delim by spaces
+		  //cout<<line.first<<endl;
+		  //cout<<line.second<<endl;
+		  
+		  // parse the lines delimited by spaces
 		  size_t last = 0;
 		  size_t next = 0;
-		  string delimeter = " ";
+		  string delimiter = " ";
 		  string token;
 		  
 		  // for each line
-		  while((next = line.second.find(delimeter,last)) != string::npos)
+		  while((next = line.second.find(delimiter,last)) != string::npos)
 		  {
-				// current token 
-				token = line.second.substr(last,next-last);
+				// get current token 
+				token = line.second.substr(last, next-last);
 				//cout<<token<<endl;
-				
-				// if the first token of a line is not sphere or light
-				if (token.compare("SPHERE")!=0 && token.compare("LIGHT")!=0)
-				{	
-					 if (token.compare("NEAR")==0)
-					 {
-					 }
-					 cout<<"found an environment param token"<<endl;
-					 params[token]; 
+				// if the first token of a line is OUTPUT we are on the last line
+				if (token.compare("OUTPUT")==0)
+				{
+					 cout<<"we didnt come this far to come this far"<<endl;
+					 last = next+delimiter.length();
+					 OUTPUT = line.second.substr(last);
+					 cout<<"drumroll pls...\n OUTPUT -> "<<OUTPUT<<endl;
+					 goto after_loop;
 				}
-				// first token of line is sphere	
+				// if the first token of a line is not SPHERE or LIGHT
+				else if (token.compare("SPHERE")!=0 && token.compare("LIGHT")!=0)
+				{	
+					 // if the token is not RES, BACK, or AMBIENT its going into the params map
+					 if (token.compare("RES")==0)
+					 {
+						  for (int i =0; i<2; i++)
+						  {
+								last = next+delimiter.length();
+								next = line.second.find(delimiter,last);
+								token = line.second.substr(last, next-last);
+								RES[i] = stoi(token);
+						  }
+						  goto end_of_loop;
+					 }
+					 else if (token.compare("BACK")==0)
+					 {
+						  for (int i=0; i<3; i++)
+						  {
+								last = next+delimiter.length();
+								next = line.second.find(delimiter,last);
+								token = line.second.substr(last, next-last);
+								BACK[i] = stof(token);
+						  }
+						  goto end_of_loop;
+					 }
+					 else if (token.compare("AMBIENT")==0)
+					 {
+						  for (int i=0; i<3; i++)
+						  {
+								last = next+delimiter.length();
+								next = line.second.find(delimiter,last);
+								token = line.second.substr(last, next-last);
+								AMBIENT[i] = stof(token);
+						  }
+						  goto end_of_loop;
+					 }
+					 else
+					 {
+					 cout<<"found an hello environment param token : "<<token<<endl;
+					 params[token];
+					 }
+				}
+				// first token of line is SPHERE	
 				else if (token.compare("SPHERE")==0)
-				{
-					 spheres[sphere_num+1] = si[sphere_num];
-					 	  
-					 si[sphere_num]
+				{	
+					 // skip the name we don't need it
+					 last = next+delimiter.length();
+					 next = line.second.find(delimiter,last);
+					 for (int i=0; i<3; i++)
+					 {
+						  last = next+delimiter.length();
+						  next = line.second.find(delimiter,last);
+						  token = line.second.substr(last, next-last);
+						  si[sphere_num].position[i] = stof(token);
+					 }
+					 for (int i=0; i<3; i++)
+					 {
+						  last = next+delimiter.length();
+						  next = line.second.find(delimiter,last);
+						  token = line.second.substr(last, next-last);
+						  si[sphere_num].scaling[i] = stof(token);
+					 }
+					 for (int i=0; i<3; i++)
+					 {
+						  last = next+delimiter.length();
+						  next = line.second.find(delimiter,last);
+						  token = line.second.substr(last, next-last);
+						  si[sphere_num].colour[i] = stof(token);
+					 }
+					 for (int i=0; i<3; i++)
+					 {
+						  last = next+delimiter.length();
+						  next = line.second.find(delimiter,last);
+						  token = line.second.substr(last, next-last);
+						  si[sphere_num].illumination[i] = stof(token);
+					 }
+					 last = next+delimiter.length();
+					 si[sphere_num].specular = stoi(line.second.substr(last));
+					 spheres[sphere_num] = si[sphere_num];
 					 sphere_num++;
+					 goto end_of_loop;
 	 			}
-				// first token of line is light
+				// first token of line is LIGHT
 				else if (token.compare("LIGHT")==0)
-				{
-
+				{	
+					 // skip the name
+					 last = next+delimiter.length();
+					 next = line.second.find(delimiter,last);
+					 for (int i=0; i<3; i++)
+					 {
+						  last = next+delimiter.length();
+						  next = line.second.find(delimiter,last);
+						  token = line.second.substr(last, next-last);
+						  li[light_num].position[i] = stof(token);
+					 }
+					 for (int i=0; i<3; i++)
+					 {
+						  last = next+delimiter.length();
+						  next = line.second.find(delimiter,last);
+						  token = line.second.substr(last, next-last);
+						  li[light_num].intensity[i] = stof(token);
+					 }
+					 lights[light_num] = li[light_num];
+					 light_num++;
+					 goto end_of_loop;
 				}
 				// increment the last pointer to after the current delimeter
-				last = next+delimeter.length();
+				last = next+delimiter.length();
+
 		  }
 		  // dont forget the last token
 		  // this is wrong as it stands
+		  cout<<"end of loop dict entry : token = "<<token<<endl;
 		  params[token] = stoi(line.second.substr(last));
-		  
 		  cout<<"dictionary entry for "<<token<<" is "<<params[token]<<endl;
-
-		  
-
-		  //return 0;
-		  /* 
-		  if (*line.first == "SPHERE")
-		  {
-				// seperate string into tokens delimeted by spaces
-				sphere_num++;
-				size_t pos = 0;
-				string delimeter = " ";
-				string token;
-				while ((pos = s.find(delimeter)) != string::npos)
-				{
-					 
-				}
-		  }
-		  */
+end_of_loop:
 	 }
+after_loop:
 	 in_file.close();
+
+	 // lets see what we've got so far
+	 for (auto param : params)
+	 {
+		  cout<<param.first<<" : "<<param.second<<endl;
+	 }
+
+	 cout<<"RES : ("<<RES[0]<<", "<<RES[1]<<")"<<endl;
+
 }
