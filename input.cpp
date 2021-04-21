@@ -4,14 +4,22 @@
 #include <iostream>
 
 using namespace std;
-
-struct sphere_info
+// sphere parameters stored in these class objects
+// i initialize 14 because i cant figure out how to create new ones... i'm new to cpp
+class sphere_info
 {	
-	 int num;
-	 int properties[14];
-};
+	 public:
+		  int num;
+		  string name;
+		  float position[3];
+		  float scaling[3];
+		  float color[3];
+		  float illumination[3];
+		  int specular;
+		  int params[14];
+}si[14];
 
-struct light_info
+class light_info
 {
 	 int num;
 	 int properties[6];
@@ -28,11 +36,24 @@ int main ()
 	 int sphere_num = 0;
 	 int light_num = 0;
 
-	 // dictionaries to store environment and object information
+	 // dictionary to store lines read from file 
 	 map<int,string> file_lines;
+	 
+	 // once we have the lines in a dictionary we can parse them out into maps and arrays for later lookup
+	 // params map is for viewport parameters
 	 map<string,int> params;
+	 
+	 // resolution width and height respectively in this array
+	 int RES[2];
+	 
+	 // two maps to store our objects parameters
 	 map<int,struct sphere_info> spheres;
 	 map<int,struct light_info> lights;
+
+	 int BACK[3];
+	 int AMBIENT[3];
+	 
+	 string OUTPUT;
 
 	 // open file and store text lines in file_lines dictionary
 	 in_file.open("testAmbient.txt");
@@ -54,22 +75,51 @@ int main ()
 	 {		
 		  cout<<line.first<<endl;
 		  cout<<line.second<<endl;
-		  
-		  size_t pos = 0;
+		  // parse the lines delim by spaces
+		  size_t last = 0;
+		  size_t next = 0;
 		  string delimeter = " ";
 		  string token;
-
-		  while((pos = line.second(find(delimeter)) != string::npos))
+		  
+		  // for each line
+		  while((next = line.second.find(delimeter,last)) != string::npos)
 		  {
-				token = line.second.substr(0,pos);
-				if (token.compare("NEAR"))
+				// current token 
+				token = line.second.substr(last,next-last);
+				//cout<<token<<endl;
+				
+				// if the first token of a line is not sphere or light
+				if (token.compare("SPHERE")!=0 && token.compare("LIGHT")!=0)
+				{	
+					 if (token.compare("NEAR")==0)
+					 {
+					 }
+					 cout<<"found an environment param token"<<endl;
+					 params[token]; 
+				}
+				// first token of line is sphere	
+				else if (token.compare("SPHERE")==0)
+				{
+					 spheres[sphere_num+1] = si[sphere_num];
+					 	  
+					 si[sphere_num]
+					 sphere_num++;
+	 			}
+				// first token of line is light
+				else if (token.compare("LIGHT")==0)
 				{
 
 				}
+				// increment the last pointer to after the current delimeter
+				last = next+delimeter.length();
 		  }
+		  // dont forget the last token
+		  // this is wrong as it stands
+		  params[token] = stoi(line.second.substr(last));
+		  
+		  cout<<"dictionary entry for "<<token<<" is "<<params[token]<<endl;
 
-
-		  return 0;
+		  
 
 		  //return 0;
 		  /* 
