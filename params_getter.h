@@ -70,41 +70,32 @@ class light_info
 class params_getter 
 {
 	 public:
+		  // maps to store parameters read from file
 		  map<string, float> params;
-		  map<string, float> get_params_map()
-		  {
-				return this->params;
-		  }
+		  map<int,struct sphere_info> spheres;
+		  map<int,struct light_info> lights;
+		  int NUM_SPHERES = 0;
+		  int NUM_LIGHTS = 0;
+		  // resolution width and height respectively in this array
+		  int RES[2];
+		  float BACK[3];
+		  float AMBIENT[3];
+		  string OUTPUT;
+		  
 		  inline int get_params(int argc, char* argv[])
 		  {
 				// define file for reading parameters from
 				ifstream in_file;
 				string file_line;
 
-				// line and object identifiers
+				// line identifier
 				int line_num = 0;
-				int NUM_SPHERES = 0;
-				int NUM_LIGHTS = 0;
 
 				// dictionary to store lines read from file 
-				map<int,string> file_lines;
+				static map<int,string> file_lines;
 				
 				// once we have the lines in a dictionary we can parse them out into maps and arrays for later lookup
-				// params map is for viewport parameters
-				//map<string,float> params;
 				
-				// resolution width and height respectively in this array
-				int RES[2];
-				
-				// two maps to store our objects parameters
-				map<int,struct sphere_info> spheres;
-				map<int,struct light_info> lights;
-
-				float BACK[3];
-				float AMBIENT[3];
-				
-				string OUTPUT;
-
 				if (argc < 2)
 				{
 					 return 1;
@@ -118,6 +109,7 @@ class params_getter
 					 line_num++;
 					 file_lines[line_num] = file_line;
 				}
+				/*
 				// print lines from file_lines dictionary as a test
 				cout<<"\nPrinting lines from file_lines dictionary:\n"<<endl;
 				for (auto line : file_lines)
@@ -128,6 +120,7 @@ class params_getter
 				// print number of items in the file_lines dictionary 
 				// which should match the number of lines in file
 				cout<<"there were "<<line_num<<" lines in this input file.\n"<<endl;
+				*/
 				// parse lines and store parameters in respective dictionaries for the line header token
 				for (auto line: file_lines)
 				{		
@@ -277,6 +270,7 @@ class params_getter
 				}
 		  after_loop:
 				in_file.close();
+				return 0;
 				// lets see what we've got so far
 				cout<<"\n\nprinting params:\n"<<endl;
 				for (auto param : params)
@@ -302,6 +296,6 @@ class params_getter
 					 cout<<li[i]<<endl;
 				}
 
-				return 0;
+				//return 0;
 		  }
 };

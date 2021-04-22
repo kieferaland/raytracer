@@ -7,9 +7,10 @@ class sphere: public hitable
 {
 	 public: 
 		  sphere(){}
-		  sphere(vec3 cen, float r): centre(cen), radius(r) {};
+		  sphere(vec3 cen, float r, vec3 col): centre(cen), radius(r), colour(col) {};
 		  virtual bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
 		  vec3 centre;
+		  vec3 colour;
 		  float radius;
 };
 
