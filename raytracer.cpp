@@ -52,7 +52,11 @@ int main (int argc, char* argv[])
 	 ofs<<"P3\n"<<W<<" "<<H<<"\n255"<<endl;
 	
 	 //cout<<NEAR<<endl;
-	 hitable *list[2];
+	 hitable *objects[NUM_SPHERES];
+	 for (int i=0; i<NUM_SPHERES; i++)
+	 {
+		  objects[i] = new sphere(vec3(
+	 }
 	 list[0] = new sphere(vec3(0,0,-1), float(0.5));
 	 list[1] = new sphere(vec3(0, -100.5, -1), float(100));
 
