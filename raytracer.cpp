@@ -65,6 +65,7 @@ class camera
 	 public:
 		  camera()
 		  {
+
 				lower_left_corner = vec3(0,0,0);
 				horizontal = vec3((pg.params["RIGHT"]-pg.params["LEFT"]),0.0,0.0);
 				vertical = vec3(0.0,(pg.params["TOP"]-pg.params["BOTTOM"]),0.0);
@@ -126,22 +127,24 @@ int main (int argc, char* argv[])
 	 for (int h = H-1; h>=0; h--){
 		  for (int w = 0; w < W; w++)
 		  {
-				vec3 col(BACK[0],BACK[1],BACK[2]);
-				/*
+				vec3 col(0,0,0);
+				
 				for (int s = 0; s < S; s++)
 				{
-					 float u = float(w + drand48())/float(W);
-					 float v = float(h + drand48())/float(H);
+					 float u = w/W;
+					 float v = h/H;
+					 //float u = float(w + drand48())/float(W);
+					 //float v = float(h + drand48())/float(H);
 					 ray r = cam.get_ray(u,v);
 					 vec3 p = r.parameterize(float(2.0));
 					 col += color(r,world);
 				}
-				*/	
-				float u = w/W;
-				float v = h/H;
-				ray r = cam.get_ray(u,v);
-				//col /= float(S);
-				//col = vec3(sqrt(col[0]),sqrt(col[1]),sqrt(col[2]));
+				
+				//float u = w/W;
+				//float v = h/H;
+				//ray r = cam.get_ray(u,v);
+				col /= float(S);
+				col = vec3(sqrt(col[0]),sqrt(col[1]),sqrt(col[2]));
 				int ir = int(255.99*col[0]);
 				int ig = int(255.99*col[1]);
 				int ib = int(255.99*col[2]);
