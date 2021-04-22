@@ -18,14 +18,16 @@ vec3 color(const ray& r, hitable *world)
 	 hit_record rec;
 	 if(world->hit(r,0.001,MAXFLOAT, rec))
 	 {
-		  vec3 target = rec.p + rec.normal + random_in_unit_sphere();
+		  vec3 target = rec.p + rec.normal;
+		  //random_in_unit_sphere();
 		  //return float(0.5)*color(ray(rec.p, target-rec.p),world);
-		  return float(0.5)*rec.colour;
+		  //return float(0.4)*rec.colour;
+		  return normalize(target)*normalize(rec.colour);
 	 }
 	 else
 	 {
-		  vec3 unit_direction = normalize(r.direction());
-		  float t = float(0.5)*unit_direction.j+float(1.0);
+		  //vec3 unit_direction = normalize(r.direction());
+		  //float t = float(0.5)*unit_direction.j+float(1.0);
 		  return(vec3(pg.BACK[0],pg.BACK[1],pg.BACK[2]));
 	 }
 }
@@ -46,7 +48,7 @@ class camera
 	 public:
 		  camera()
 		  {
-
+				//set camera according to file params
 				lower_left_corner = vec3(0,0,0);
 				horizontal = vec3((pg.params["RIGHT"]-pg.params["LEFT"]),0.0,0.0);
 				vertical = vec3(0.0,(pg.params["TOP"]-pg.params["BOTTOM"]),0.0);
@@ -105,12 +107,12 @@ int main (int argc, char* argv[])
 				
 				for (int s = 0; s < S; s++)
 				{
-					 //float u = w/W;
-					 //float v = h/H;
+					 //anti aliasing, basically randomly selecting some nearby pixels aka filtering
+					 //because i didnt take into account true pixel locations
 					 float u = float(w + drand48())/float(W);
 					 float v = float(h + drand48())/float(H);
 					 ray r = cam.get_ray(u,v);
-					 vec3 p = r.parameterize(float(2.0));
+					 //vec3 p = r.parameterize(float(2.0));
 					 col += color(r,world);
 				}
 				
@@ -118,6 +120,8 @@ int main (int argc, char* argv[])
 				//float v = h/H;
 				//ray r = cam.get_ray(u,v);
 				col /= float(S);
+				// gamma 2 : means raise the colour to the power of 1/gamma 
+				// aka sqrt
 				col = vec3(sqrt(col[0]),sqrt(col[1]),sqrt(col[2]));
 				int ir = int(255.99*col[0]);
 				int ig = int(255.99*col[1]);
