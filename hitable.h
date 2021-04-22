@@ -11,6 +11,7 @@ struct hit_record
 	 vec3 p;
 	 vec3 normal;
 	 material *mat_ptr;
+	 vec3 colour;
 };
 
 class hitable

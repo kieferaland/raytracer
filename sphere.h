@@ -29,6 +29,7 @@ bool sphere::hit(const ray&r, float t_min, float t_max, hit_record& rec) const
 				rec.t = temp;
 				rec.p = r.parameterize(rec.t);
 				rec.normal = (rec.p-centre)/radius;
+				rec.colour = this->colour;
 				return true;
 		  }
 		  temp = (-b + sqrt(b*b - a*c))/a;

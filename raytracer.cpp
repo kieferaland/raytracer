@@ -19,13 +19,14 @@ vec3 color(const ray& r, hitable *world)
 	 if(world->hit(r,0.001,MAXFLOAT, rec))
 	 {
 		  vec3 target = rec.p + rec.normal + random_in_unit_sphere();
-		  return float(0.5)*color(ray(rec.p, target-rec.p),world);
+		  //return float(0.5)*color(ray(rec.p, target-rec.p),world);
+		  return float(0.5)*rec.colour;
 	 }
 	 else
 	 {
 		  vec3 unit_direction = normalize(r.direction());
 		  float t = float(0.5)*unit_direction.j+float(1.0);
-		  return((float(1.0)-t)*vec3(1.0,1.0,1.0)+t*(vec3(0.5,0.7,1.0)));
+		  return(vec3(pg.BACK[0],pg.BACK[1],pg.BACK[2]));
 	 }
 }
 
@@ -39,26 +40,6 @@ vec3 random_in_unit_sphere()
 	 while (p.squared_length() >= float(1.0));
 	 return p;
 }
-
-vec3 reflect(const vec3& v, const vec3& n)
-{
-	 return v - float(2.0)*dot(v,n)*n;
-}
-
-class lambertian: public material
-{
-	 public:
-		  lambertian(const vec3& a): albedo(a) {}
-		  virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const
-		  {
-				vec3 target = rec.p + rec.normal + random_in_unit_sphere();
-				scattered = ray(rec.p, target-rec.p);
-				attenuation = albedo;
-				return true;
-		  }
-
-		  vec3 albedo;
-};
 
 class camera
 {
@@ -99,13 +80,6 @@ int main (int argc, char* argv[])
 	 float BACK[3] = {pg.BACK[0], pg.BACK[1], pg.BACK[2]};
 	 float AMBIENT[3] = {pg.AMBIENT[0], pg.AMBIENT[1], pg.AMBIENT[2]};
 	 string OUTPUT = pg.OUTPUT;
-	 
-	 /*
-	 vec3 v = vec3(1.3,1.3,1.3);
-	 float vdv = dot(v,v);
-	 cout<<"vdotv = "<<vdv<<endl;
-	 */
-
 	 int W = RES[0];
 	 int H = RES[1];
 	 int S = 100;
@@ -114,7 +88,7 @@ int main (int argc, char* argv[])
 	
 	 //cout<<NEAR<<endl;
 	 hitable *objects[NUM_SPHERES];
-	 for (int i=0; i<1; i++)
+	 for (int i=0; i<NUM_SPHERES; i++)
 	 {
 		  cout<<"making sphere "<<i+1<<endl;
 		  objects[i] = new sphere(vec3(si[i].position[0],si[i].position[1],si[i].position[2]), si[i].scaling[0], vec3(si[i].colour[0], si[i].colour[1], si[i].colour[2]));
@@ -131,10 +105,10 @@ int main (int argc, char* argv[])
 				
 				for (int s = 0; s < S; s++)
 				{
-					 float u = w/W;
-					 float v = h/H;
-					 //float u = float(w + drand48())/float(W);
-					 //float v = float(h + drand48())/float(H);
+					 //float u = w/W;
+					 //float v = h/H;
+					 float u = float(w + drand48())/float(W);
+					 float v = float(h + drand48())/float(H);
 					 ray r = cam.get_ray(u,v);
 					 vec3 p = r.parameterize(float(2.0));
 					 col += color(r,world);
