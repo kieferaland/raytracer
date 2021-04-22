@@ -19,10 +19,8 @@ vec3 color(const ray& r, hitable *world)
 	 if(world->hit(r,0.001,MAXFLOAT, rec))
 	 {
 		  vec3 target = rec.p + rec.normal;
-		  //random_in_unit_sphere();
-		  //return float(0.5)*color(ray(rec.p, target-rec.p),world);
-		  //return float(0.4)*rec.colour;
-		  return normalize(target)*normalize(rec.colour);
+		  return rec.colour*normalize(target-rec.p);
+		  
 	 }
 	 else
 	 {
@@ -112,7 +110,8 @@ int main (int argc, char* argv[])
 					 float u = float(w + drand48())/float(W);
 					 float v = float(h + drand48())/float(H);
 					 ray r = cam.get_ray(u,v);
-					 //vec3 p = r.parameterize(float(2.0));
+					 
+					 vec3 p = r.parameterize(float(2.0));
 					 col += color(r,world);
 				}
 				
@@ -131,7 +130,7 @@ int main (int argc, char* argv[])
 		  }
 	 }
 	 ofs.close();
-	 //return 0;
+	 return 0;
 	 // lets see what we've got so far
 	 cout<<"\n\nprinting params from raytracer.cpp:\n"<<endl;
 	 for (auto param : params)
